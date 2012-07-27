@@ -1,0 +1,79 @@
+RIM-COD-SHA1-9: 28 4c cd 5b e0 71 f8 e7 9d e2 bb 7a 1e 0d f8 97 ca 84 2b 53
+RIM-COD-SHA1-8: f2 52 5d 41 83 60 aa 17 f7 80 ff e5 0d aa 10 06 35 ac b9 f2
+RIM-COD-SHA1-7: af b4 c6 c9 0e cf ef 3c c1 9d 7a 31 07 30 a9 84 75 a7 38 d0
+RIM-COD-SHA1-6: af ba 9b e9 52 08 cf 0d 3b cc 47 be 72 f5 f8 ab 02 4e 76 19
+RIM-COD-SHA1-5: 4b eb 00 8b 50 4c 35 f4 d8 20 3d 94 ce ca 14 28 8c 20 5a 52
+RIM-COD-SHA1-4: df f8 d8 65 3b be 50 e3 20 78 f9 d8 c7 30 0e 0c 6b f3 93 d6
+RIM-COD-SHA1-3: 11 d0 e1 20 0c 40 5e 71 f4 5f 60 16 29 2e bd 2a 80 30 e5 7f
+RIM-COD-SHA1-2: cf 30 d9 19 fc 04 0b e9 0b d9 35 8f 43 43 5a aa 88 c9 8e 92
+RIM-COD-SHA1-1: 8a ab c3 a5 38 af 2d 51 82 cf c3 e2 c9 f1 f8 74 f7 d4 01 3c
+RIM-COD-Size-21: 65716
+RIM-COD-Size-20: 50168
+RIM-COD-URL-19: VTV-19.cod
+RIM-COD-URL-18: VTV-18.cod
+RIM-COD-URL-17: VTV-17.cod
+RIM-COD-URL-16: VTV-16.cod
+RIM-COD-URL-15: VTV-15.cod
+RIM-COD-URL-14: VTV-14.cod
+RIM-COD-URL-13: VTV-13.cod
+RIM-COD-URL-12: VTV-12.cod
+RIM-COD-Size: 63008
+RIM-COD-URL-11: VTV-11.cod
+RIM-COD-URL-10: VTV-10.cod
+MIDlet-Vendor: VTV - Open Multimedia
+Manifest-Version: 1.0
+RIM-MIDlet-Flags-1: 0
+RIM-COD-Size-19: 50168
+RIM-COD-Size-18: 50164
+RIM-COD-Size-17: 50164
+RIM-COD-Size-16: 56316
+RIM-COD-Size-15: 55084
+RIM-COD-Size-14: 27640
+RIM-COD-Size-13: 50168
+RIM-COD-Size-12: 57480
+RIM-COD-Size-11: 53544
+RIM-COD-Size-10: 50168
+MIDlet-Version: 0.98
+MicroEdition-Profile: MIDP-2.0
+RIM-COD-SHA1-21: 5a ac 43 15 75 96 c5 31 49 02 7c 27 67 f1 47 9d df 7d 17 61
+RIM-COD-SHA1-20: 4e 23 1b a2 84 a7 40 9f 82 68 31 72 43 ff a0 bf b6 97 49 56
+RIM-COD-URL: VTV.cod
+RIM-COD-Creation-Time: 1343353319
+MicroEdition-Configuration: CLDC-1.1
+MIDlet-Jar-URL: VTV.jar
+RIM-COD-SHA1-19: 8f 46 c0 d4 8d e6 aa 6b 8d 5c 40 ff 81 b6 d2 43 f2 02 f7 89
+RIM-COD-SHA1-18: d1 e1 db 70 e9 14 66 8b 29 75 63 cb 00 75 6d 86 27 0d fa 8f
+RIM-COD-SHA1-17: 18 ca 5a 65 ea 80 29 f0 80 49 b7 e5 79 ed 4b 5c fb ed 15 1d
+RIM-COD-SHA1-16: 79 b8 08 d8 48 44 41 da 84 88 81 8e 70 2e 03 13 24 fd 4e 59
+RIM-COD-SHA1-15: 4e a3 af bf c1 b2 96 3e 22 f7 5d 25 63 37 f8 ca ab 23 d0 b4
+RIM-COD-SHA1-14: e1 bd 46 be f6 67 a8 e0 08 ab 4c da f6 ab 0c 12 7a d4 79 1c
+RIM-COD-SHA1-13: 75 b0 bf 16 83 40 10 f5 df 85 5a 62 95 d3 7c b6 85 b8 06 57
+RIM-COD-SHA1-12: 25 45 b4 5d f0 30 0c 19 92 81 01 5c 97 bf 8e 8e 5a 72 ad 38
+RIM-COD-Size-9: 50168
+RIM-COD-SHA1-11: 28 81 4e 35 f1 1c 97 54 53 98 84 df 60 24 e1 d1 60 80 d6 af
+RIM-COD-Size-8: 50168
+RIM-COD-SHA1-10: 95 94 f4 fc 2c 6d 12 18 1e 7e 59 72 a3 2c c8 3b 92 b2 2e a7
+RIM-COD-Size-7: 50168
+RIM-COD-Size-6: 50168
+RIM-COD-Size-5: 50168
+RIM-COD-Size-4: 50168
+RIM-COD-Size-3: 50168
+RIM-COD-Size-2: 54496
+RIM-COD-Size-1: 44828
+MIDlet-1: Venezolana de Television,img/icon.png,
+MIDlet-Name: VTV
+RIM-COD-SHA1: 5b 8a fd 0d 17 6b 50 f1 83 ce 2b 4a 3e cb bc 38 f4 a1 a9 db
+RIM-COD-Module-Dependencies: net_rim_cldc,net_rim_networkapi,net_rim_bbapi_browser,net_rim_bb_browser_field2_api
+MIDlet-Jar-Size: 752353
+RIM-COD-URL-9: VTV-9.cod
+RIM-COD-URL-8: VTV-8.cod
+RIM-COD-URL-7: VTV-7.cod
+RIM-COD-URL-6: VTV-6.cod
+RIM-COD-URL-5: VTV-5.cod
+RIM-COD-URL-4: VTV-4.cod
+RIM-COD-URL-3: VTV-3.cod
+RIM-COD-URL-2: VTV-2.cod
+RIM-COD-URL-1: VTV-1.cod
+RIM-COD-Module-Name: VTV
+RIM-COD-URL-21: VTV-21.cod
+RIM-COD-URL-20: VTV-20.cod

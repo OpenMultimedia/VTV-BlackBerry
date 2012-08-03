@@ -11,6 +11,8 @@ import net.rim.device.api.system.Display;
 import net.rim.device.api.system.EncodedImage;
 import net.rim.device.api.ui.Color;
 import net.rim.device.api.ui.Field;
+import net.rim.device.api.ui.FieldChangeListener;
+import net.rim.device.api.ui.FocusChangeListener;
 import net.rim.device.api.ui.FontFamily;
 import net.rim.device.api.ui.Graphics;
 import net.rim.device.api.ui.Manager;
@@ -31,6 +33,7 @@ import net.rim.device.api.ui.decor.BackgroundFactory;
 import net.rim.device.api.ui.decor.Border;
 import net.rim.device.api.ui.decor.BorderFactory;
 import om.vtv.Aplicacion;
+import om.vtv.Portada;
 import om.vtv.Video;
 import cam.aedes.CInterface;
 import cam.aedes.CMainScreen;
@@ -83,8 +86,14 @@ public class Layout extends UserInterface {
 		fm_Header.setBackground(back_Header);
 		parent.add(fm_Header);
 				
-		final int columnWidth1 = (52);
+		final int columnWidth1 = (50);
+		
 		final int columnWidth0 = (Display.getWidth()-columnWidth1);
+		
+		String logo = "img/logohead.png";
+		if (Display.getWidth()<360) {
+			logo = "img/logohead_sm.png";
+		}
 			
 		//MAIN LOGO
 		HorizontalFieldManager lgo = new HorizontalFieldManager(Manager.NO_VERTICAL_SCROLL | Manager.NO_HORIZONTAL_SCROLL | Manager.FIELD_HCENTER) {
@@ -98,7 +107,7 @@ public class Layout extends UserInterface {
 			       super.setExtent(width, height);
 			   }
 		};
-			BitmapField img = ci.WriteSimpleImage(lgo, "img/logohead.png", BitmapField.FIELD_VCENTER | BitmapField.FIELD_HCENTER, 0, "");
+			BitmapField img = ci.WriteSimpleImage(lgo, logo, BitmapField.FIELD_VCENTER | BitmapField.FIELD_HCENTER, 0, "");
 			img.setMargin(2,2,2,2);
 	        fm_Header.add(lgo);
 	        
@@ -151,16 +160,16 @@ public class Layout extends UserInterface {
         
         fm_Body.add(fm_Img);
         
-        WriteFormatLabel(fm_Body, h2, Color.BLACK, title); 
+        FormatLabel(fm_Body, h2, Color.BLACK, title); 
         
 		if (vdate != "") {
-			WriteFormatLabel(fm_Body, h3, Color.DARKGRAY, vdate); 
+			FormatLabel(fm_Body, h3, Color.DARKGRAY, vdate); 
 		}
 		if (duration != "") {
-			WriteFormatLabel(fm_Body, h3, Color.DARKGRAY, duration); 
+			FormatLabel(fm_Body, h3, Color.DARKGRAY, duration); 
 		}
         
-		WriteFormatLabel(fm_Body, h3, Color.BLACK, section); 
+		FormatLabel(fm_Body, h3, Color.BLACK, section); 
         
         parent.invalidate();
 	}
@@ -193,14 +202,14 @@ public class Layout extends UserInterface {
 		VerticalFieldManager fm_Right = new VerticalFieldManager();
 		fm_Body.add(fm_Right);
         
-        WriteFormatLabel(fm_Right, h4, Color.BLACK, title);     
-        WriteFormatLabel(fm_Right, small, Color.DARKGRAY, section);
+        FormatLabel(fm_Right, h4, Color.BLACK, title);     
+        FormatLabel(fm_Right, small, Color.DARKGRAY, section);
         
 		if (vdate != "") {
-			 WriteFormatLabel(fm_Right, small, Color.GRAY, vdate);
+			 FormatLabel(fm_Right, small, Color.GRAY, vdate);
 		}
 		if (duration != "") {
-			WriteFormatLabel(fm_Right, small2, Color.GRAY, duration);
+			FormatLabel(fm_Right, small2, Color.GRAY, duration);
 		}
         parent.invalidate();
 	}
@@ -242,16 +251,16 @@ public class Layout extends UserInterface {
 		fm_Ctl.setBackground(bplain);
 		fm_Ctl.setPadding(4,4,4,4);
 		WriteSimpleImage(fm_Ctl, "img/btn_play.png", 0, 0, "");
-		WriteFormatLabel(fm_Ctl, h3, Color.WHITE, "Reproducir");		
+		FormatLabel(fm_Ctl, h3, Color.WHITE, "Reproducir");		
 		
     	//TEXT HOLDER
 		VerticalFieldManager fm_TH = new VerticalFieldManager(Manager.USE_ALL_WIDTH);
 		fm_TH.setMargin(4,4,4,4);
 				
-			WriteFormatLabel(fm_TH,  small, Color.DARKGRAY, vdate);
-			WriteFormatLabel(fm_TH,  h2, Color.BLACK, title);
-			WriteFormatLabel(fm_TH,  small, Color.DARKGRAY, description);
-			WriteFormatLabel(fm_TH,  small2, Color.DARKGRAY, lenght);
+			FormatLabel(fm_TH,  small, Color.DARKGRAY, vdate);
+			FormatLabel(fm_TH,  h2, Color.BLACK, title);
+			FormatLabel(fm_TH,  small, Color.DARKGRAY, description);
+			FormatLabel(fm_TH,  small2, Color.DARKGRAY, lenght);
 
 	
 		fm_Main.add(fm_Image);
@@ -262,14 +271,17 @@ public class Layout extends UserInterface {
 	}
 	
 	
-	public void construct_video_extended_info(Manager parent, final String share_path, final String theme, final String section, String slug, final String country, String tags) {
+	public void construct_video_extended_info(
+			Manager parent, final String share_path, 
+			final String content_name, final String content_slug,
+			final String filter_name, final String filter_slug) {
 		
 		//TEXT HOLDER 3
 		VerticalFieldManager fm_Holder3 = new VerticalFieldManager(Manager.USE_ALL_WIDTH);
 		fm_Holder3.setBackground(b);
 		fm_Holder3.setBorder(bb);
 		fm_Holder3.setMargin(3,3,3,3);
-		WriteFormatLabel(fm_Holder3, small, Color.DARKGRAY, "Compartir");
+		FormatLabel(fm_Holder3, small, Color.DARKGRAY, "Compartir");
 		parent.add(fm_Holder3);
     	
     	//SHARE HOLDER
@@ -319,71 +331,31 @@ public class Layout extends UserInterface {
 		fm_Main.setMargin(13,3,3,3);
 		parent.add(fm_Main);
 		
-		WriteFormatLabel(fm_Main, small, Color.DARKGRAY, "Relacionados");
+		FormatLabel(fm_Main, small, Color.DARKGRAY, "Relacionados");
 		
 		HorizontalFieldManager fm_HField = new HorizontalFieldManager(Manager.USE_ALL_WIDTH);
-			ButtonField bf_related = new ButtonField(ButtonField.CONSUME_CLICK|ButtonField.FOCUSABLE);
-			bf_related.setLabel("Relacionados");
-			fm_HField.add(bf_related);
-			
-			ButtonField bf_rel1 = new ButtonField(ButtonField.CONSUME_CLICK|ButtonField.FOCUSABLE);
-			bf_rel1.setLabel("Rel1");
-			fm_HField.add(bf_rel1);
-			
-			ButtonField bf_rel2 = new ButtonField(ButtonField.CONSUME_CLICK|ButtonField.FOCUSABLE);
-			bf_rel2.setLabel("Rel2");
-			fm_HField.add(bf_rel2);
-		fm_Main.add(fm_HField);
 		
-    	//TEXT THEME
-    	if ((theme != "") && (theme != null) && (!(theme.equalsIgnoreCase("null")))) {
-    		VerticalFieldManager fm_Inner = new VerticalFieldManager(Manager.USE_ALL_WIDTH){
-    			protected boolean navigationClick(int status, int time) {
-    				//invoke_video_list(content_lang, "", "", "", "tema="+t.s.name_to_slug(theme));
-    				return true;
+			ButtonField bf_rel1 = new ButtonField(content_name,ButtonField.CONSUME_CLICK);
+			fm_HField.add(bf_rel1);
+			bf_rel1.setChangeListener(new FieldChangeListener() {
+				public void fieldChanged(Field field, int context) {
+		        	Screen screen = new Portada(content_slug);    
+		        	UiApplication.getUiApplication().pushScreen(screen);  
 				}
-    		};
-    		fm_Inner.setBackground(b);
-    		fm_Inner.setBorder(bb);
-    		fm_Inner.setMargin(3,3,3,3);
-    		WriteFormatLabel(fm_Inner, h3, Color.BLACK, "Tema");
-    		LabelField lf = WriteFormatLabel(fm_Inner, small, Color.BLACK, theApp.s.slug_to_name(theme));
-    		fm_Main.add(fm_Inner);
-    	}
-    	
-    	//TEXT SECTION/CATEGO
-    	if ((section != "") && (section != null)) {
-    		VerticalFieldManager fm_Inner2 = new VerticalFieldManager(Manager.USE_ALL_WIDTH){
-    			protected boolean navigationClick(int status, int time) {
-    				//invoke_video_list(content_lang, "categoria", t.s.name_to_slug(section), "", "");
-    				return true;
+			});
+			
+			
+			ButtonField bf_rel2 = new ButtonField(filter_name,ButtonField.CONSUME_CLICK);
+			fm_HField.add(bf_rel2);
+			bf_rel2.setChangeListener(new FieldChangeListener() {
+				public void fieldChanged(Field field, int context) {
+		        	Screen screen = new Portada(content_slug, filter_slug);    
+		        	UiApplication.getUiApplication().pushScreen(screen);  
 				}
-    		};
-    		fm_Inner2.setBackground(b);
-    		fm_Inner2.setBorder(bb);
-    		fm_Inner2.setMargin(3,3,3,3);
-    		WriteFormatLabel(fm_Inner2, h3, Color.BLACK, "Categoría");
-    		WriteFormatLabel(fm_Inner2, small, Color.BLACK, theApp.s.slug_to_name(section));
-    		fm_Main.add(fm_Inner2);
-    	}
-    	
-    	//TEXT COUNTRY	
-    	if ((country != "") && (country != null)) {
-    		VerticalFieldManager fm_Inner3 = new VerticalFieldManager(Manager.USE_ALL_WIDTH){
-    			protected boolean navigationClick(int status, int time) {
-    				//invoke_video_list(content_lang, "categoria", "", "","pais="+t.s.name_to_slug(country));
-    				return true;
-				}
-    		};
-    		fm_Inner3.setBackground(b);
-    		fm_Inner3.setBorder(bb);
-    		fm_Inner3.setMargin(3,3,3,3);
-    		WriteFormatLabel(fm_Inner3, h3, Color.BLACK, "País");
-    		WriteFormatLabel(fm_Inner3, small, Color.BLACK, theApp.s.slug_to_name(country));
-    		fm_Main.add(fm_Inner3);
-    	}
-    	
-    	
+			});
+			
+			
+		fm_Main.add(fm_HField); 	
 		
 		
 		
@@ -412,16 +384,49 @@ public class Layout extends UserInterface {
     	return fm_Body;
 	}
 	
-	public Manager construct_menu_item(Manager parent, String name, String description, String image_path, String link, boolean setfocus, final String listener) {     		
+	public Manager construct_image_menu_item(Manager parent, String name, String description, String image_path, boolean setfocus, final String listener, final String link) {     		
 		VerticalFieldManager fm_Body = new VerticalFieldManager(){
     		protected boolean navigationClick(int status, int time)
     		  {
-    			c.action_callback("video_menu_click", listener, "");
+    			c.action_callback("video_menu_click", listener, link);
     		    return true;
     		  }
     	};
     	fm_Body.setPadding(4,4,4,4);
     	WriteWebImage(fm_Body, image_path, 180);
+    	parent.add(fm_Body);
+    	if (setfocus) { fm_Body.setFocus(); }
+    	return fm_Body;
+	}
+	
+	public Manager construct_text_menu_item(Manager parent, String name, String description, String image_path, boolean setfocus, final String listener, final String link) {     		
+		final Background b1 = BackgroundFactory.createSolidTransparentBackground(Color.BLACK, 86);
+		VerticalFieldManager fm_Body = new VerticalFieldManager(Field.FOCUSABLE){
+    		protected boolean navigationClick(int status, int time)
+    		  {
+    			c.action_callback("video_menu_click", listener, link);
+    		    return true;
+    		  }
+    		
+    	};
+
+    	fm_Body.setPadding(4,4,4,4);
+    	LabelField lf = FocusableFormatLabel(fm_Body, h3, Color.WHITE, name);
+    	lf.setFocusListener(new FocusChangeListener() 
+		{
+			public void focusChanged(Field field, int context) 
+			{
+				if (context==FocusChangeListener.FOCUS_GAINED) { field.setBackground(b1); }			
+				if (context==FocusChangeListener.FOCUS_LOST) { field.setBackground(null); }	
+			}
+
+		}); 
+    	lf.setChangeListener(new FieldChangeListener(){
+
+			public void fieldChanged(Field field, int context) {
+    			c.action_callback("video_menu_click", listener, link);
+			}});
+    	//WriteWebImage(fm_Body, image_path, 180);
     	parent.add(fm_Body);
     	if (setfocus) { fm_Body.setFocus(); }
     	return fm_Body;
@@ -453,9 +458,9 @@ public class Layout extends UserInterface {
 				   }
 			};
 			vfm.add(btn);
-			WriteFormatLabel(vfm, small, Color.BLACK, "Vínculo a la nota");
-			WriteFormatLabel(vfm, h3, Color.BLACK, link);
-			WriteFormatLabel(vfm, small, Color.BLACK, "Se incluirá automáticamente");
+			FormatLabel(vfm, small, Color.BLACK, "Vínculo a la nota");
+			FormatLabel(vfm, h3, Color.BLACK, link);
+			FormatLabel(vfm, small, Color.BLACK, "Se incluirá automáticamente");
 		}
 	
 		if (content.equalsIgnoreCase("mail")) {
@@ -484,9 +489,9 @@ public class Layout extends UserInterface {
 				   }
 			};
 			vfm.add(btn);
-			WriteFormatLabel(vfm, small, Color.BLACK, "Vínculo a la nota");
-			WriteFormatLabel(vfm, h3, Color.BLACK, link);
-			WriteFormatLabel(vfm, small, Color.BLACK, "Se incluirá automáticamente");
+			FormatLabel(vfm, small, Color.BLACK, "Vínculo a la nota");
+			FormatLabel(vfm, h3, Color.BLACK, link);
+			FormatLabel(vfm, small, Color.BLACK, "Se incluirá automáticamente");
 		}
 		return vfm;	
 	}
@@ -564,10 +569,26 @@ public class Layout extends UserInterface {
 		
 	}
 	
-	public LabelField WriteFormatLabel(Manager parent, net.rim.device.api.ui.Font font, final int color, String content) {	
+	public LabelField FormatLabel(Manager parent, net.rim.device.api.ui.Font font, final int color, String content) {	
 		content = content.trim();
 
 	    LabelField l_Label = new LabelField(content, Field.NON_FOCUSABLE) {
+	        public void paint(Graphics g){
+	            g.setColor(color);  
+	            super.paint(g);
+	        }  
+	    };
+	    l_Label.setMargin(1,1,1,1);
+	    l_Label.setPadding(0,0,0,0);
+	    l_Label.setFont(font);
+	    parent.add(l_Label);
+		return l_Label;
+	}
+	
+	public LabelField FocusableFormatLabel(Manager parent, net.rim.device.api.ui.Font font, final int color, String content) {	
+		content = content.trim();
+
+	    LabelField l_Label = new LabelField(content, Field.FOCUSABLE) {
 	        public void paint(Graphics g){
 	            g.setColor(color);  
 	            super.paint(g);

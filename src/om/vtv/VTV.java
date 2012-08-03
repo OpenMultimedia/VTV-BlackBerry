@@ -15,12 +15,15 @@ import om.json.datamodel.OmVideoDataModel;
 import om.json.datamodel.VideoObject;
 import om.ui.Layout;
 
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
 import net.rim.blackberry.api.browser.Browser;
 import net.rim.device.api.content.BlackBerryContentHandler;
+import net.rim.device.api.i18n.SimpleDateFormat;
 import net.rim.device.api.io.IOUtilities;
+import net.rim.device.api.io.http.HttpDateParser;
 import net.rim.device.api.io.transport.ConnectionDescriptor;
 import net.rim.device.api.io.transport.ConnectionFactory;
 import net.rim.device.api.system.Application;
@@ -112,7 +115,8 @@ public class VTV extends CMainScreen{
 		}
 		
 		if (action.equalsIgnoreCase("video_menu_click")) {
-			//invoke_sharing(specific, param);
+        	Screen screen = new Portada(specific, param);    
+        	UiApplication.getUiApplication().pushScreen(screen);
 		}
 		
 		if (action.equalsIgnoreCase("menu_launch")) {
@@ -132,7 +136,7 @@ public class VTV extends CMainScreen{
             if (app.getActiveScreen().getScreenBelow() != null) {
             	app.popScreen( app.getActiveScreen().getScreenBelow() );
             }
-        	Screen screen = new Portada("categoria");    
+        	Screen screen = new Portada("noticia");    
         	UiApplication.getUiApplication().pushScreen(screen);                  
         }    
     };	
@@ -143,7 +147,7 @@ public class VTV extends CMainScreen{
             if (app.getActiveScreen().getScreenBelow() != null) {
             	app.popScreen( app.getActiveScreen().getScreenBelow() );
             }
-        	Screen screen = new Portada("", "programa", "", "programa", "");    
+        	Screen screen = new Portada("programa");    
         	UiApplication.getUiApplication().pushScreen(screen);  
         }    
     };	
@@ -154,7 +158,7 @@ public class VTV extends CMainScreen{
             if (app.getActiveScreen().getScreenBelow() != null) {
             	app.popScreen( app.getActiveScreen().getScreenBelow() );
             }
-        	Screen screen = new Portada("", "entrevista", "", "entrevista", "");    
+        	Screen screen = new Portada("entrevista");    
         	UiApplication.getUiApplication().pushScreen(screen);  
         }    
     };	
@@ -207,14 +211,14 @@ public class VTV extends CMainScreen{
 	}
 	
 	public void makeMenu(Menu menu, int instance) {
-		   //Image in = ImageFactory.createImage(Bitmap.getBitmapResource("img/noticias.png"));
+		   Image in = ImageFactory.createImage(Bitmap.getBitmapResource("img/noticias.png"));
 		   Image ip = ImageFactory.createImage(Bitmap.getBitmapResource("img/programas.png"));
 		   //Image ie = ImageFactory.createImage(Bitmap.getBitmapResource("img/especiales.png"));
 		   //Image ib = ImageFactory.createImage(Bitmap.getBitmapResource("img/buscar.png"));
 		   //Image im = ImageFactory.createImage(Bitmap.getBitmapResource("img/mas.png"));
 		   Image iv = ImageFactory.createImage(Bitmap.getBitmapResource("img/live.png"));
 		   Image ic = ImageFactory.createImage(Bitmap.getBitmapResource("img/btn_del.png"));
-		   //m_news.setIcon(in);
+		   m_news.setIcon(in);
 		   m_prog.setIcon(ip);
 		   //m_inter.setIcon(ie);
 		   //m_search.setIcon(ib);
@@ -227,7 +231,7 @@ public class VTV extends CMainScreen{
 		      //menu.add(_newMenuItem);
 		      //menu.add(_optionsMenuItem);
 		   }
-		   //menu.add(m_news);
+		   menu.add(m_news);
 		   menu.add(m_prog);
 		   //menu.add(m_inter);
 		   //menu.add(m_search);
@@ -285,7 +289,7 @@ public class VTV extends CMainScreen{
 	}
 		 
 	public void invoke_video_list(String lang, String master, String categoria, String tipo, String sdefault) {
-		Screen screen = new Portada(lang, master, categoria, tipo, sdefault);    
+		Screen screen = new Portada(tipo);    
     	UiApplication.getUiApplication().pushScreen(screen);  
     }
 	
@@ -413,6 +417,16 @@ public class VTV extends CMainScreen{
 		LabelField l_O = new LabelField(text, Field.FOCUSABLE);
 		gparent.add(l_O);
 		return l_O;
+	}
+	
+	
+	public String DateParseTransform(String date) {
+		String r = "";
+		Date currentDate = new Date();
+        Date sentdate = new Date(HttpDateParser.parse(date));
+        SimpleDateFormat sdf = new SimpleDateFormat("EEE, dd/MMM/yy, hh:mm a");
+        //return sdf.formatLocal();
+        return sdf.format(sentdate);       
 	}
 	
 

@@ -15,14 +15,16 @@ import net.rim.device.api.ui.UiApplication;
 public class Portada extends VTV {
 	
 	boolean first = true;
+	String content = "noticia";
+	String filter = "";
 	
-	Portada(String content) {
+	public Portada(final String content) {
 		UiApplication ui = UiApplication.getUiApplication();
 		theApp = (Aplicacion) ui;
-	
 		La = new Layout(this);
 		
-		f_master = "categoria";
+		this.content = content;
+		
 		Manager fm_MainHolder = La.construct_main();
 		super.add(fm_MainHolder);
 	    mastercontainer = fm_MainHolder;
@@ -42,13 +44,16 @@ public class Portada extends VTV {
         
 	}
 	
-	Portada(String content, String filter) {
+	public Portada(final String content, final String filter) {
 		UiApplication ui = UiApplication.getUiApplication();
 		theApp = (Aplicacion) ui;
 		
 		La = new Layout(this);
 		
-		f_master = "categoria";
+		this.content = content;
+		this.filter = filter;
+		
+		System.out.println("THIS_CONTENT___>"+content+"___FILTER___"+filter);
         f_categoria = filter;
         Manager fm_MainHolder = La.construct_main();
 		super.add(fm_MainHolder);
@@ -69,72 +74,37 @@ public class Portada extends VTV {
         
         UiApplication.getUiApplication().invokeLater(new Runnable() {
 			public void run() {
-	        	startJsonContent(); 
+	        	startJsonContent(content, filter); 
 			}
 		});
-        
-        
-	}
-	
-	Portada(String lang, String master, String categoria, String tipo, String sdefault) {
-		UiApplication ui = UiApplication.getUiApplication();
-		theApp = (Aplicacion) ui;
-		
-		La = new Layout(this);
-		
-        content_lang = lang;
-		f_master = master;
-		f_categoria = categoria;
-		f_tipo = tipo;
-		f_default = sdefault;
-		Manager fm_MainHolder = La.construct_main();
-		super.add(fm_MainHolder);
-	    mastercontainer = fm_MainHolder;
-	    La.construct_header(fm_MainHolder,true);
-        if (master.equalsIgnoreCase("programa")) {
-        	
-        } 
-        
-		UiApplication app = (UiApplication)Application.getApplication();
-		if (app.getActiveScreen().getScreenBelow() != null) {
-        	app.popScreen( app.getActiveScreen().getScreenBelow() );
-        }
-		
-        
-        UiApplication.getUiApplication().invokeLater(new Runnable() {
-			public void run() {
-	        	startJsonMenu(); 
-			}
-		});
-		
-        UiApplication.getUiApplication().invokeLater(new Runnable() {
-			public void run() {
-	        	startJsonContent(); 
-			}
-		});	
         
         
 	}
 	
 	public void startJsonContent() {
-		if (theApp.videos!=null) {
-			videos = theApp.videos;
-			inflateVideos(videos,f_master);
-		} else {
-			OmWebApi owa = new OmWebApi();
-			String resurl = owa.getDefault();
-			String[] params = {"videos"};
-			getResource(resurl, params);
-		}
-
+		OmWebApi owa = new OmWebApi();
+		String resurl = owa.getDefault();
+		String[] params = {"videos"};
+		getResource(resurl, params);
+	}
+	
+	public void startJsonContent(String kind, String filter) {
+		OmWebApi owa = new OmWebApi();
+		String resurl = owa.getFiltered(kind, filter);
+		String[] params = {"videos"};
+		getResource(resurl, params);
 	}
 	
 	public void startJsonMenu() {
-		if (theApp.videos_menu!=null) {
-			videos_menu = theApp.videos_menu;
-			inflateVideosMenu(videos_menu,f_master);
-		} else {
-			OmWebApi owa = new OmWebApi();
+		menucontainer = La.construct_hmenu_holder(mastercontainer);
+		OmWebApi owa = new OmWebApi();
+		
+		if (this.content.equalsIgnoreCase("noticia")) {
+			String resurl = owa.getMenu("categoria");
+			String[] params = {"menu_programa"};
+			getResource(resurl, params);
+		}
+		if (this.content.equalsIgnoreCase("programa")) {
 			String resurl = owa.getMenu("programa");
 			String[] params = {"menu_programa"};
 			getResource(resurl, params);
@@ -223,37 +193,57 @@ public class Portada extends VTV {
 	}
 	
 	public void inflateVideoItem(final VideoObject vo, String filter) {
-		if (first) {
-			La.construct_main_video(
-					mastercontainer, 
-					vo.getString("thumbnail_grande"), 
-					vo.getString("titulo"), 
-					vo.getString("descripcion"), 
-					vo.getString("programa_nombre"), 
-					vo.getString("duración"), 
-					vo.getString("fecha"), 
-					vo.getString("slug")
-				);	
-		} else {
-			La.construct_listed_video(
-					mastercontainer, 
-					vo.getString("thumbnail_mediano"), 
-					vo.getString("titulo"), 
-					vo.getString("descripcion"), 
-					vo.getString("programa_nombre"), 
-					vo.getString("duración"), 
-					vo.getString("fecha"), 
-					vo.getString("slug")
-				);
+		String vsfilter = "tipo_slug";
+		String vsslug = "programa_slug";
+		String vsnombre = "programa_nombre";
+		
+		if (this.content.equalsIgnoreCase("noticia")) {
+			vsfilter = "categoria_slug";
+			vsslug = "categoria_slug";
+			vsnombre = "categoria_nombre";
+		} 
+		
+		if (this.content.equalsIgnoreCase("programa")) {
+			vsfilter = "programa_slug";
+			vsslug = "programa_slug";
+			vsnombre = "programa_nombre";
 		}
-		//La.construct_makescrollable_attache(mastercontainer);
-		first=false;
+		
+		System.out.println("THIS_FILTER___>"+filter+"___VS___"+vsfilter);
+        
+		 
+		if (vo.getString("tipo_slug").equalsIgnoreCase(this.content)) {
+			String datet = DateParseTransform(vo.getString("fecha"));
+			if (first) {
+				La.construct_main_video(
+						mastercontainer, 
+						vo.getString("thumbnail_grande"), 
+						vo.getString("titulo"), 
+						vo.getString("descripcion"), 
+						vo.getString(vsnombre), 
+						vo.getString("duración"), 
+						datet, 
+						vo.getString("slug")
+					);	
+			} else {
+				La.construct_listed_video(
+						mastercontainer, 
+						vo.getString("thumbnail_mediano"), 
+						vo.getString("titulo"), 
+						vo.getString("descripcion"), 
+						vo.getString(vsnombre), 
+						vo.getString("duración"), 
+						datet, 
+						vo.getString("slug")
+					);
+			}
+			first=false;
+		}
 		System.out.println(vo.getString("titulo"));
 	}
 	
 	
 	public void inflateVideosMenu(VideoObject[] mvideos, String filter) {
-		menucontainer = La.construct_hmenu_holder(mastercontainer);
 		for (int i = 0; i < mvideos.length; i++) {
 			VideoObject vob = mvideos[i];
 			System.out.println("EACH MENU ITEM"+i);
@@ -262,14 +252,27 @@ public class Portada extends VTV {
 	}
 	
 	public void inflateVideosMenuItem(final VideoObject vo, String filter) {
-		La.construct_menu_item(menucontainer, 
-				vo.getString("nombre"), 
-				vo.getString("descripcion"), 
-				vo.getString("imagen_url"), 
-				vo.getString("slug"),
-				false, 
-				vo.getString("slug")
-			);		
+		if (this.content.equalsIgnoreCase("noticia")) {
+			La.construct_text_menu_item(menucontainer, 
+					vo.getString("nombre"), 
+					vo.getString("descripcion"), 
+					vo.getString("imagen_url"), 
+					false, 
+					this.content,
+					vo.getString("slug")
+					
+				);	
+		} else {
+			La.construct_image_menu_item(menucontainer, 
+					vo.getString("nombre"), 
+					vo.getString("descripcion"), 
+					vo.getString("imagen_url"), 
+					false, 
+					this.content,
+					vo.getString("slug")
+				);	
+		}
+	
 		System.out.println("MENU"+vo.getString("slug"));	
 	}
 

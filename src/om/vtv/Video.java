@@ -10,6 +10,7 @@ public class Video extends VTV {
 	
 	private boolean startplaying = false;
 	private String slug = "";
+	private String link = "";
 	
 	public Video(String slug, boolean play) {
 		this.slug=slug;
@@ -55,6 +56,22 @@ public class Video extends VTV {
 		this_video_url = vo.getString("archivo_url");
 		this_video_slug = vo.getString("slug");
 		System.out.println("THIS VIDEO______>"+this_video_slug+ ": "+ this_video_url);
+		
+		String content_slug = vo.getString("tipo_slug");
+		String content_name = vo.getString("tipo_nombre_plural");
+		
+		String filter_slug = "";
+		String filter_name = "";
+		
+		if (content_slug.equalsIgnoreCase("noticia")) {
+			filter_slug = vo.getString("categoria_slug");
+			filter_name = vo.getString("categoria_nombre");
+		} 
+		
+		if (content_slug.equalsIgnoreCase("programa")) {
+			filter_slug = vo.getString("programa_slug");
+			filter_name = vo.getString("programa_nombre");
+		}
 		La.construct_video_details(mastercontainer, 
 				vo.getString("archivo_url"), 
 				vo.getString("thumbnail_grande"), 
@@ -66,11 +83,10 @@ public class Video extends VTV {
 			);
 		La.construct_video_extended_info(mastercontainer, 
 				vo.getString("archivo_url"), 
-				vo.getString("tema_slug"), 
-				vo.getString("categoria"), 
-				vo.getString("slug"), 
-				vo.getString("pais"), 
-				vo.getString("tags")
+				content_name,
+				content_slug,
+				filter_name,
+				filter_slug
 			);
 		System.out.println(vo.getString("titulo"));
 	}

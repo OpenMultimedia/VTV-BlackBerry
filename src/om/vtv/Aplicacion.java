@@ -16,19 +16,13 @@ public class Aplicacion extends UiApplication
 	
     public static void main(String[] args)
     {
-        // Create a new instance of the application and make the currently
-        // running thread the application's event dispatch thread.
         Aplicacion theApp = new Aplicacion();       
         theApp.enterEventDispatcher();
     }
     
-
-    /**
-     * Creates a new Aplicacion object
-     */
     public Aplicacion()
     {        
     	s = new Semantics();
-        pushScreen(new Portada("categoria"));
+        pushScreen(new Portada("noticia"));
     }    
 }

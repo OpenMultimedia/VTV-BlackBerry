@@ -11,6 +11,11 @@ public class OmWebApi {
 		return defurl;
 	}
 	
+	public String getFiltered(String kind, String filter) {
+		if (kind.equalsIgnoreCase("noticia")) { kind = "categoria"; }
+		return defurl + "&" + kind + "=" + filter;
+	}
+	
 	public String getMenu(String kind) {
 		return baseurl+"/"+kind+"/";
 	}

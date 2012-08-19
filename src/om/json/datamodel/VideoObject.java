@@ -9,7 +9,8 @@ public class VideoObject extends GenericObject {
 	
 	static String[] propNames = {
 			"titulo", "slug", "descripcion", "archivo_url", "fecha", "thumbnail_grande", "thumbnail_mediano", "url", "duracion", "pais", "ciudad", "programa",
-			"nombre", "imagen_url", "@programa#nombre", "@programa#slug", "@tipo#nombre", "@tipo#nombre_plural", "@tipo#slug", "@categoria#nombre", "@categoria#slug"
+			"nombre", "imagen_url", "@programa#nombre", "@programa#slug", "@tipo#nombre", "@tipo#nombre_plural", "@tipo#slug", "@categoria#nombre", "@categoria#slug",
+			"navegador_url"
 	};
 	
 	public String[] getPropNames() {

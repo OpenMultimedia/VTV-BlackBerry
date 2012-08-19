@@ -3,6 +3,7 @@ package om.vtv;
 import om.json.datamodel.VideoObject;
 import om.ui.Layout;
 
+import net.rim.device.api.i18n.Locale;
 import net.rim.device.api.ui.Manager;
 import net.rim.device.api.ui.UiApplication;
 
@@ -10,13 +11,14 @@ public class Video extends VTV {
 	
 	private boolean startplaying = false;
 	private String slug = "";
-	private String link = "";
+	private String this_vid_share_url = "";
 	
 	public Video(String slug, boolean play) {
 		this.slug=slug;
 		this.startplaying = play;
 		UiApplication ui = UiApplication.getUiApplication();
 		theApp = (Aplicacion) ui;
+		Locale.setDefault(Locale.get(Locale.LOCALE_es_MX, null));  
 	
 		La = new Layout(this);
 		
@@ -55,6 +57,7 @@ public class Video extends VTV {
 	public void inflateVideoItem(final VideoObject vo, boolean startplaying) {
 		this_video_url = vo.getString("archivo_url");
 		this_video_slug = vo.getString("slug");
+		this_vid_share_url = vo.getString("navegador_url");
 		System.out.println("THIS VIDEO______>"+this_video_slug+ ": "+ this_video_url);
 		
 		String content_slug = vo.getString("tipo_slug");
@@ -72,17 +75,19 @@ public class Video extends VTV {
 			filter_slug = vo.getString("programa_slug");
 			filter_name = vo.getString("programa_nombre");
 		}
+		String datet = DateParseTransform(vo.getString("fecha"));
+		String durt = TimeParseTransform(vo.getString("duracion"));
 		La.construct_video_details(mastercontainer, 
 				vo.getString("archivo_url"), 
 				vo.getString("thumbnail_grande"), 
 				vo.getString("titulo"), 
 				vo.getString("descripcion"),  
 				"seccion", 
-				vo.getString("duración"), 
-				vo.getString("fecha")
+				durt, 
+				datet
 			);
 		La.construct_video_extended_info(mastercontainer, 
-				vo.getString("archivo_url"), 
+				this_vid_share_url, 
 				content_name,
 				content_slug,
 				filter_name,

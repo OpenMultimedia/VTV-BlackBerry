@@ -8,19 +8,22 @@ import javax.microedition.content.ContentHandler;
 import javax.microedition.content.Invocation;
 import javax.microedition.content.Registry;
 import javax.microedition.io.HttpConnection;
-import om.data.API;
 import om.json.datamodel.NewsObject;
 import om.json.datamodel.OmDataModel;
 import om.json.datamodel.OmVideoDataModel;
+import om.json.datamodel.OmWebApi;
 import om.json.datamodel.VideoObject;
 import om.ui.Layout;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
 import net.rim.blackberry.api.browser.Browser;
 import net.rim.device.api.content.BlackBerryContentHandler;
+import net.rim.device.api.i18n.DateFormat;
+import net.rim.device.api.i18n.FieldPosition;
 import net.rim.device.api.i18n.SimpleDateFormat;
 import net.rim.device.api.io.IOUtilities;
 import net.rim.device.api.io.http.HttpDateParser;
@@ -65,17 +68,6 @@ public class VTV extends CMainScreen{
 	public String this_video_category;
 	public String main_former_section = "";
 	public String secondary_former_section = "";
-	public String activity_sytle_kind = "";
-	public String search_str = "";
-	public String f_ilang = "";
-	public String f_lang = "";
-	public String f_master ="";
-	public String f_categoria = "";
-	public String f_tipo = "";
-	public String f_default = "";
-	boolean is_long_video = false;
-	boolean on_mobile_network = false;
-	public boolean im_secondary_list = false;
 	public boolean error_collapse = false;
 	int video_curr_paging = 1;
 	public int video_page_increment = 6;
@@ -111,7 +103,7 @@ public class VTV extends CMainScreen{
 	
 	public void action_callback(String action, String specific, String param) {
 		if (action.equalsIgnoreCase("share")) {
-			invoke_sharing(specific, param);
+			invoke_sharing(param, specific);
 		}
 		
 		if (action.equalsIgnoreCase("video_menu_click")) {
@@ -151,40 +143,7 @@ public class VTV extends CMainScreen{
         	UiApplication.getUiApplication().pushScreen(screen);  
         }    
     };	
-	private MenuItem m_inter=new MenuItem("Entrevistas",3,10)
-    {
-        public void run() { 
-            UiApplication app = (UiApplication)Application.getApplication();
-            if (app.getActiveScreen().getScreenBelow() != null) {
-            	app.popScreen( app.getActiveScreen().getScreenBelow() );
-            }
-        	Screen screen = new Portada("entrevista");    
-        	UiApplication.getUiApplication().pushScreen(screen);  
-        }    
-    };	
-	private MenuItem m_search=new MenuItem("Búsqueda",4,10)
-    {
-        public void run() { 
-            UiApplication app = (UiApplication)Application.getApplication();
-            if (app.getActiveScreen().getScreenBelow() != null) {
-            	app.popScreen( app.getActiveScreen().getScreenBelow() );
-            }
-        	Screen screen = new Busqueda();    
-        	UiApplication.getUiApplication().pushScreen(screen);  
-        }    
-    };	
-	private MenuItem m_more=new MenuItem("Más",5,10)
-    {
-        public void run() { 
-            UiApplication app = (UiApplication)Application.getApplication();
-            if (app.getActiveScreen().getScreenBelow() != null) {
-            	app.popScreen( app.getActiveScreen().getScreenBelow() );
-            }
-        	Screen screen = new More();    
-        	UiApplication.getUiApplication().pushScreen(screen);  
-        }    
-    };	
-    
+	    
     private MenuItem m_live=new MenuItem("En Vivo",5,10)
     {
         public void run() { 
@@ -213,80 +172,26 @@ public class VTV extends CMainScreen{
 	public void makeMenu(Menu menu, int instance) {
 		   Image in = ImageFactory.createImage(Bitmap.getBitmapResource("img/noticias.png"));
 		   Image ip = ImageFactory.createImage(Bitmap.getBitmapResource("img/programas.png"));
-		   //Image ie = ImageFactory.createImage(Bitmap.getBitmapResource("img/especiales.png"));
-		   //Image ib = ImageFactory.createImage(Bitmap.getBitmapResource("img/buscar.png"));
-		   //Image im = ImageFactory.createImage(Bitmap.getBitmapResource("img/mas.png"));
 		   Image iv = ImageFactory.createImage(Bitmap.getBitmapResource("img/live.png"));
 		   Image ic = ImageFactory.createImage(Bitmap.getBitmapResource("img/btn_del.png"));
 		   m_news.setIcon(in);
 		   m_prog.setIcon(ip);
-		   //m_inter.setIcon(ie);
-		   //m_search.setIcon(ib);
-		   //m_more.setIcon(im);
 		   m_live.setIcon(iv);
 		   m_end.setIcon(ic);
 		   super.makeMenu(menu, instance);
-		   //add these items to the full menu 
-		   if (instance == Menu.INSTANCE_DEFAULT) {
-		      //menu.add(_newMenuItem);
-		      //menu.add(_optionsMenuItem);
-		   }
 		   menu.add(m_news);
 		   menu.add(m_prog);
-		   //menu.add(m_inter);
-		   //menu.add(m_search);
 		   menu.add(m_live);
-		   //menu.add(m_more);
 		   menu.add(m_end);
 	}
 	
 	
     
-    public void self_reload() {
-    	invoke_video_list(f_lang, f_master, f_categoria, f_tipo, f_default);
-    }
-    
+   
     public void load_more_vids(Manager parent) {
-    	//construct_json_res(parent, f_lang, f_master, f_categoria, f_tipo, f_default);
+    	
     }
     	
-	public void invoke_search_list(String maintxt) {
-    	String superstring ="";
-    	if (!(maintxt.equalsIgnoreCase(""))) {
-    		superstring = "texto=" + maintxt + "&";
-    	}
-    	
-    	String n_default = "";
-    	Enumeration keys = SearchFilters.keys();
-    	String key, value;
-    	while(keys.hasMoreElements()) {
-    	    key = (String) keys.nextElement();
-    	    value = (String) SearchFilters.get(key);
-    	    value = theApp.s.name_to_slug(value);
-    	    n_default = key + "=" + value + "&";
-    	    
-    	}
-    	if (n_default!="") {
-    		superstring +=  n_default;
-    	}
-    	
-    	if (superstring.length()>2) {
-	    	if (superstring.substring(superstring.length()-1).equalsIgnoreCase("&")) {
-	    		superstring = superstring.substring(0, superstring.length()-1);
-	    	}
-    	}
-    	invoke_video_list(f_lang, "", f_categoria,"",superstring);
-    }
-	
-	public Manager invoke_hold_flag(final Manager parent, String lang) { 
-		//InterfaceBuilder tsi = new InterfaceBuilder(lang, "", "", "", "", false);
-		//return tsi.construct_hold_manager(parent);
-		return null;
-	}
-	
-	public void destruct_filter_appendix(VTV t, String key, String val) {
-			if (t.f_categoria.equalsIgnoreCase(val)) { t.f_categoria = ""; } else {  theApp.s.SearchFilters.remove(val); }
-	}
 		 
 	public void invoke_video_list(String lang, String master, String categoria, String tipo, String sdefault) {
 		Screen screen = new Portada(tipo);    
@@ -294,16 +199,14 @@ public class VTV extends CMainScreen{
     }
 	
 	public void invoke_sharing(String vurl, String method) {
-    	API tswa = new API(f_lang);
-    	vurl = tswa.GetVidAddress(vurl);
 		Screen screen = new Share(method,vurl);    
     	UiApplication.getUiApplication().pushScreen(screen); 
 	    	
     }
     
     public void invoke_live() {
-    	API twa = new API(f_lang);
-    	String url = twa.GetStreaming();
+    	OmWebApi owa = new OmWebApi();
+    	String url = owa.getStreaming();
     	Browser.getDefaultSession().displayPage(url);
     }
     	
@@ -370,43 +273,16 @@ public class VTV extends CMainScreen{
 	public void Initialize_Interface(){ 
 
 	}
-		
-	public void InitializeFilters(Manager parent) {
-		
-		if (f_tipo.equalsIgnoreCase("programa")) { return ; }
-    	    	
-    	if (f_master.equalsIgnoreCase("entrevista")) {
-    			
-    	}
-        	
-    	if (!(f_categoria.equalsIgnoreCase(""))) {
-    		//InterfaceBuilder tsi = new InterfaceBuilder(this, false);
-    		//tsi.construct_filter_flag(parent,f_categoria, "categoria");
-    	}
-    	
-    	if (!(f_tipo.equalsIgnoreCase(""))) {
-    		//InterfaceBuilder tsi = new InterfaceBuilder(this, false);
-    		//tsi.construct_filter_flag(parent,f_tipo, "tipo");
-    	}
-    	
-    	if (!(f_default.equalsIgnoreCase(""))) {
-    		//InterfaceBuilder tsi = new InterfaceBuilder(this, false);
-    		//tsi.construct_filter_flag(parent,f_default, "busqueda");
-    	}
-    	
-    }
-	
+			
 	public String StreamToString(InputStream is) {
 		
 		if (is != null) {
 			try {
 				String str = new String(IOUtilities.streamToBytes(is), "UTF-8");
 				return str;
-			} catch (UnsupportedEncodingException e) {
-				return "unsup encod";
-			} catch (IOException e) {
+			} catch (Exception e) {
 				return "";
-			}
+			} 
 		  
 		}  else { 
 			return "";
@@ -419,12 +295,27 @@ public class VTV extends CMainScreen{
 		return l_O;
 	}
 	
+	public String TimeParseTransform(String time) {
+		String r = time;
+		if (r.length()>5){
+			//String hh = r.substring(0,2);
+			//String mm = r.substring(1,2);
+			//int h = Integer.parseInt(hh);
+			//int m = Integer.parseInt(mm);
+			//r = "";
+			//if (m>55) { h++; m = 0; }
+			//if (h>1) { r+= h + " horas "; } else if (h>0) { r+= "Una hora "; }
+			//if (m>5) { r+= m + " minutos"; }
+		}
+        return "";   
+	}
+	
 	
 	public String DateParseTransform(String date) {
 		String r = "";
 		Date currentDate = new Date();
         Date sentdate = new Date(HttpDateParser.parse(date));
-        SimpleDateFormat sdf = new SimpleDateFormat("EEE, dd/MMM/yy, hh:mm a");
+        SimpleDateFormat sdf = new SimpleDateFormat("EEEE, dd-MMM-yyyy");
         //return sdf.formatLocal();
         return sdf.format(sentdate);       
 	}

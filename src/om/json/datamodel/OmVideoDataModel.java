@@ -32,7 +32,6 @@ public class OmVideoDataModel extends JsonParser {
 					JSONObject joo = jArray.getJSONObject(ii);
 					
 					
-					
 					for(int p = 0; p < aprops.length; p++) {												
 						String val = "";
 			    		if (aprops[p].indexOf("@")==-1) {
@@ -53,7 +52,9 @@ public class OmVideoDataModel extends JsonParser {
 			    		}
 					}
 					actualVids.fillObject(thistable);
-					vov.addElement(actualVids);			
+					vov.addElement(actualVids);	
+					thistable = null;
+					actualVids = null;
 				}
 			} catch (Exception e) { 
 				System.out.println("__JSONE___"+e.toString());

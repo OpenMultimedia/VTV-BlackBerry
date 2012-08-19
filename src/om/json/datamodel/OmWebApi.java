@@ -4,7 +4,8 @@ public class OmWebApi {
 	
 	String baseurl = "http://api-vtv.openmultimedia.biz";
 	String clipurl = "";
-	String defurl = "http://api-vtv.openmultimedia.biz/clip/?detalle=completo";
+	String liveurl = "rtsp://edg.ord.movipbox2.streamguys.net/vtv-moviles/vtv.sdp";
+	String defurl = "http://api-vtv.openmultimedia.biz/clip/?detalle=completo&primero=1&ultimo=15";
 	String noteurl = "http://api-vtv.openmultimedia.biz/clip/?detalle=completo";
 	
 	public String getDefault() {
@@ -23,6 +24,10 @@ public class OmWebApi {
 	
 	public String getNote(String id) {
 		return noteurl+id;
+	}
+	
+	public String getStreaming(){
+		return liveurl;
 	}
 	
 

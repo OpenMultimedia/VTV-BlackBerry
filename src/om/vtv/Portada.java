@@ -8,6 +8,7 @@ import om.json.datamodel.OmVideoDataModel;
 import om.json.datamodel.OmWebApi;
 import om.json.datamodel.VideoObject;
 import om.ui.Layout;
+import net.rim.device.api.i18n.Locale;
 import net.rim.device.api.system.Application;
 import net.rim.device.api.ui.Manager;
 import net.rim.device.api.ui.UiApplication;
@@ -22,6 +23,7 @@ public class Portada extends VTV {
 		UiApplication ui = UiApplication.getUiApplication();
 		theApp = (Aplicacion) ui;
 		La = new Layout(this);
+		Locale.setDefault(Locale.get(Locale.LOCALE_es_MX, null));  
 		
 		this.content = content;
 		
@@ -54,7 +56,6 @@ public class Portada extends VTV {
 		this.filter = filter;
 		
 		System.out.println("THIS_CONTENT___>"+content+"___FILTER___"+filter);
-        f_categoria = filter;
         Manager fm_MainHolder = La.construct_main();
 		super.add(fm_MainHolder);
 	    mastercontainer = fm_MainHolder;
@@ -117,7 +118,7 @@ public class Portada extends VTV {
 	}
 	
 	public void callback_downloaded(InputStream is, String[] content) {
-		System.out.println("_____DOWNLOADED CALLBACK ID "+content[0]);
+		//System.out.println("_____DOWNLOADED CALLBACK ID "+content[0]);
 		if (content[0]=="videos") { all_videos(StreamToString(is)); }
 		if (content[0]=="menu_programa") { menu_videos(StreamToString(is)); }
 	}
@@ -129,7 +130,7 @@ public class Portada extends VTV {
 				odm = new OmDataModel(str);
 				news = odm.getItems();
 				theApp.news = news;
-				inflateNews(news, f_master);
+				inflateNews(news, filter);
 			}
 		});	
 		
@@ -137,13 +138,12 @@ public class Portada extends VTV {
 	}
 	
 	public void all_videos(final String str) {
-		System.out.println("DOWNLOADED "+str);
 		UiApplication.getUiApplication().invokeLater(new Runnable() {
 			public void run() {
 				ovm = new OmVideoDataModel(str);
 				videos = ovm.getItems();
 				theApp.videos = videos;
-				inflateVideos(videos,f_master);
+				inflateVideos(videos,filter);
 			}
 		});	
 		
@@ -157,7 +157,7 @@ public class Portada extends VTV {
 				menu_ovm = new OmVideoDataModel(str);
 				videos_menu = menu_ovm.getItems();
 				theApp.videos_menu = videos_menu;
-				inflateVideosMenu(videos_menu,f_master);
+				inflateVideosMenu(videos_menu,filter);
 			}
 		});	
 	}
@@ -187,7 +187,6 @@ public class Portada extends VTV {
 	public void inflateVideos(VideoObject[] mvideos, String filter) {
 		for (int i = 0; i < mvideos.length; i++) {
 			VideoObject vob = mvideos[i];
-			System.out.println("EACH VIDEO"+i);
 			inflateVideoItem(vob, filter);	
 		}
 	}
@@ -214,6 +213,7 @@ public class Portada extends VTV {
 		 
 		if (vo.getString("tipo_slug").equalsIgnoreCase(this.content)) {
 			String datet = DateParseTransform(vo.getString("fecha"));
+			String durt = TimeParseTransform(vo.getString("duracion"));
 			if (first) {
 				La.construct_main_video(
 						mastercontainer, 
@@ -221,7 +221,7 @@ public class Portada extends VTV {
 						vo.getString("titulo"), 
 						vo.getString("descripcion"), 
 						vo.getString(vsnombre), 
-						vo.getString("duración"), 
+						durt, 
 						datet, 
 						vo.getString("slug")
 					);	
@@ -232,14 +232,14 @@ public class Portada extends VTV {
 						vo.getString("titulo"), 
 						vo.getString("descripcion"), 
 						vo.getString(vsnombre), 
-						vo.getString("duración"), 
+						durt, 
 						datet, 
 						vo.getString("slug")
 					);
 			}
 			first=false;
 		}
-		System.out.println(vo.getString("titulo"));
+		//System.out.println(vo.getString("titulo"));
 	}
 	
 	
@@ -252,12 +252,14 @@ public class Portada extends VTV {
 	}
 	
 	public void inflateVideosMenuItem(final VideoObject vo, String filter) {
+		boolean focus = false;
+		if (this.filter.equalsIgnoreCase(vo.getString("slug"))){focus = true;}
 		if (this.content.equalsIgnoreCase("noticia")) {
 			La.construct_text_menu_item(menucontainer, 
 					vo.getString("nombre"), 
 					vo.getString("descripcion"), 
 					vo.getString("imagen_url"), 
-					false, 
+					focus, 
 					this.content,
 					vo.getString("slug")
 					
@@ -267,7 +269,7 @@ public class Portada extends VTV {
 					vo.getString("nombre"), 
 					vo.getString("descripcion"), 
 					vo.getString("imagen_url"), 
-					false, 
+					focus, 
 					this.content,
 					vo.getString("slug")
 				);	

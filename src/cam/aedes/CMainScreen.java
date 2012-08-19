@@ -22,5 +22,9 @@ public class CMainScreen extends MainScreen {
 	public void action_callback(String action, String specific, String param) {
 		
 	}
+	
+	public void action_callback(String action, String params[]) {
+		
+	}
 
 }

@@ -55,6 +55,7 @@ public class Layout extends UserInterface {
 	XYEdges xye = new XYEdges(2,2,2,2);
 	
 	Background bplain = BackgroundFactory.createSolidTransparentBackground(Color.BLACK, 72);
+	Background bfocus = BackgroundFactory.createSolidTransparentBackground(Color.BLACK, 95);
 	
 	Background mainbkg = BackgroundFactory.createBitmapBackground(Bitmap.getBitmapResource("img/fondo1.jpg"));
 	Background b = BackgroundFactory.createSolidTransparentBackground(Color.GRAY, 24);
@@ -62,8 +63,11 @@ public class Layout extends UserInterface {
 	Border bb = BorderFactory.createRoundedBorder(xye, Color.DARKGRAY, Border.STYLE_SOLID);
 	
 	Background ba = BackgroundFactory.createSolidTransparentBackground(Color.GRAY, 64);
-	Background b0a = BackgroundFactory.createSolidTransparentBackground(Color.GRAY, 82);
+	Background b0a = BackgroundFactory.createSolidTransparentBackground(Color.DARKRED, 80);
 	Border bba = BorderFactory.createRoundedBorder(xye, Color.WHITE, Border.STYLE_SOLID);
+	
+	final int color_grayest = 2171169;
+	final int color_vtv = 12400697;
 
 	public Layout(CMainScreen c) {
 		super(c);
@@ -82,7 +86,7 @@ public class Layout extends UserInterface {
 	public Manager construct_header(Manager parent, boolean reload) {
 		CInterface ci = new CInterface();
 		HorizontalFieldManager fm_Header = new HorizontalFieldManager(Manager.FIELD_VCENTER | Manager.FIELD_LEFT| Manager.FIELD_BOTTOM | Manager.USE_ALL_WIDTH);
-		Background back_Header = BackgroundFactory.createSolidBackground(12400697);
+		Background back_Header = BackgroundFactory.createSolidBackground(color_vtv);
 		fm_Header.setBackground(back_Header);
 		parent.add(fm_Header);
 				
@@ -148,6 +152,15 @@ public class Layout extends UserInterface {
                 return true;
             }	
 		};
+		fm_Body.setFocusListener(new FocusChangeListener() 
+		{
+			public void focusChanged(Field field, int context) 
+			{
+				if (context==FocusChangeListener.FOCUS_GAINED) { field.setBackground(b0a); }			
+				if (context==FocusChangeListener.FOCUS_LOST) { field.setBackground(b0); }	
+			}
+
+		}); 
 		fm_Body.setBorder(bb);
 		fm_Body.setBackground(b0);
 		fm_Body.setMargin(2,2,2,2);
@@ -163,13 +176,13 @@ public class Layout extends UserInterface {
         FormatLabel(fm_Body, h2, Color.BLACK, title); 
         
 		if (vdate != "") {
-			FormatLabel(fm_Body, h3, Color.DARKGRAY, vdate); 
+			FormatLabel(fm_Body, small2, color_grayest, vdate); 
 		}
 		if (duration != "") {
-			FormatLabel(fm_Body, h3, Color.DARKGRAY, duration); 
+			//FormatLabel(fm_Body, small, Color.RED, duration); 
 		}
         
-		FormatLabel(fm_Body, h3, Color.BLACK, section); 
+		FormatLabel(fm_Body, small, Color.RED, section); 
         
         parent.invalidate();
 	}
@@ -183,6 +196,15 @@ public class Layout extends UserInterface {
                 return true;
             }	
 		};
+		fm_Body.setFocusListener(new FocusChangeListener() 
+		{
+			public void focusChanged(Field field, int context) 
+			{
+				if (context==FocusChangeListener.FOCUS_GAINED) { field.setBackground(b0a); }			
+				if (context==FocusChangeListener.FOCUS_LOST) { field.setBackground(b0); }	
+			}
+
+		}); 
 		fm_Body.setBorder(bb);
 		fm_Body.setBackground(b);
 		fm_Body.setMargin(2,1,2,1);
@@ -192,25 +214,39 @@ public class Layout extends UserInterface {
 		video_path += ";deviceside=true";
 		
 		VerticalFieldManager fm_Img = new VerticalFieldManager(){
-			
+			protected boolean navigationClick(int status,int time)
+            {
+        		Screen screen = new Video(link, true);    
+        	    UiApplication.getUiApplication().pushScreen(screen);
+                return true;
+            }	
 		};
 		fm_Body.add(fm_Img);
 		
 		BitmapField b_VidImage = WriteWebImage(fm_Img, video_path, maxw);
         b_VidImage.setMargin(0,4,0,0);
    
-		VerticalFieldManager fm_Right = new VerticalFieldManager();
+		VerticalFieldManager fm_Right = new VerticalFieldManager(){
+			protected boolean navigationClick(int status,int time)
+            {
+        		Screen screen = new Video(link, true);    
+        	    UiApplication.getUiApplication().pushScreen(screen);
+                return true;
+            }	
+		};
 		fm_Body.add(fm_Right);
         
         FormatLabel(fm_Right, h4, Color.BLACK, title);     
-        FormatLabel(fm_Right, small, Color.DARKGRAY, section);
         
 		if (vdate != "") {
-			 FormatLabel(fm_Right, small, Color.GRAY, vdate);
+			 FormatLabel(fm_Right, small2, color_grayest, vdate);
 		}
 		if (duration != "") {
-			FormatLabel(fm_Right, small2, Color.GRAY, duration);
+			//FormatLabel(fm_Right, small2, Color.GRAY, duration);
 		}
+		
+		FormatLabel(fm_Right, small2, Color.RED, section);
+        
         parent.invalidate();
 	}
 	
@@ -227,40 +263,67 @@ public class Layout extends UserInterface {
 		fm_Main.setMargin(3,3,3,3);
 		
     	//IMAGE HOLDER
-		HorizontalFieldManager fm_Image = new HorizontalFieldManager(){
+		HorizontalFieldManager fm_Image = new HorizontalFieldManager(Manager.FOCUSABLE){
 			protected boolean navigationClick(int status,int time)
             {
 				c.action_callback("play_video", "", "");
                 return true;
             }
 		};
+		fm_Image.setFocusListener(new FocusChangeListener() 
+		{
+			public void focusChanged(Field field, int context) 
+			{
+				if (context==FocusChangeListener.FOCUS_GAINED) { field.setBackground(bfocus); }			
+				if (context==FocusChangeListener.FOCUS_LOST) { field.setBackground(null); }	
+			}
+
+		}); 
 
 		int fotow = Display.getWidth()-10;
 		fm_Image.setMargin(3,3,3,3);
 		WriteWebImage(fm_Image, video_img, fotow); 
 		
     	//CONTROL HOLDER
-		HorizontalFieldManager fm_Ctl = new HorizontalFieldManager(Manager.USE_ALL_WIDTH | Manager.FIELD_VCENTER) {
+		HorizontalFieldManager fm_Ctl = new HorizontalFieldManager(Manager.USE_ALL_WIDTH | Manager.FIELD_VCENTER | Manager.FOCUSABLE) {
 			protected boolean navigationClick(int status,int time)
             {
 				c.action_callback("play_video", "selected", "");
                 return true;
             }
+			
+			
 		};
+		fm_Ctl.setFocusListener(new FocusChangeListener() 
+		{
+			public void focusChanged(Field field, int context) 
+			{
+				if (context==FocusChangeListener.FOCUS_GAINED) { field.setBackground(bfocus); }			
+				if (context==FocusChangeListener.FOCUS_LOST) { field.setBackground(bplain); }	
+			}
 
+		}); 
 		fm_Ctl.setBackground(bplain);
 		fm_Ctl.setPadding(4,4,4,4);
-		WriteSimpleImage(fm_Ctl, "img/btn_play.png", 0, 0, "");
+		BitmapField bf1 = WriteSimpleImage(fm_Ctl, "img/btn_play.png", BitmapField.FOCUSABLE, 0, "");
+		bf1.setFocusListener(new FocusChangeListener() 
+		{
+			public void focusChanged(Field field, int context) 
+			{
+				
+			}
+
+		}); 
 		FormatLabel(fm_Ctl, h3, Color.WHITE, "Reproducir");		
 		
     	//TEXT HOLDER
 		VerticalFieldManager fm_TH = new VerticalFieldManager(Manager.USE_ALL_WIDTH);
 		fm_TH.setMargin(4,4,4,4);
 				
-			FormatLabel(fm_TH,  small, Color.DARKGRAY, vdate);
+			FormatLabel(fm_TH,  small, Color.BLACK, vdate);
 			FormatLabel(fm_TH,  h2, Color.BLACK, title);
-			FormatLabel(fm_TH,  small, Color.DARKGRAY, description);
-			FormatLabel(fm_TH,  small2, Color.DARKGRAY, lenght);
+			FormatLabel(fm_TH,  small2, Color.RED, lenght);
+			FormatLabel(fm_TH,  small, Color.BLACK, description);
 
 	
 		fm_Main.add(fm_Image);
@@ -297,7 +360,7 @@ public class Layout extends UserInterface {
 		};
         fH1.setPadding(0,0,0,0);
         fH1.setMargin(1,1,1,1);
-        fm_Holder4.add(fH1);
+        //fm_Holder4.add(fH1);
 		
         Bitmap bH2 = Bitmap.getBitmapResource("img/tweetbtn.png");
 		BitmapField fH2 = new BitmapField(bH2, BitmapField.FOCUSABLE){
@@ -361,16 +424,19 @@ public class Layout extends UserInterface {
 		
 	}
 		
-	public BitmapField WriteWebImage(final Manager parent, final String url, int size) {
-		BitmapField fImg = new BitmapField(Bitmap.getBitmapResource("img/cargandosm.png"), BitmapField.FOCUSABLE){
+	public BitmapField WriteWebImage(final Manager parent, final String url, final int size) {
+		final BitmapField fImg = new BitmapField(Bitmap.getBitmapResource("img/cargandosm.png"), BitmapField.FOCUSABLE){
 			protected void layout(int width, int height) {
 	            setExtent(getBitmapWidth()+3, getBitmapHeight()+3);
 	        }
 		};
 	    parent.add(fImg);
 	    try {
-	    	new AsyncDownloadImage(url,fImg,size).run();
-
+	    	UiApplication.getUiApplication().invokeLater(new Runnable() {
+				public void run() {
+					new AsyncDownloadImage(url,fImg,size).run();
+				}
+			});
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -426,14 +492,16 @@ public class Layout extends UserInterface {
 			public void fieldChanged(Field field, int context) {
     			c.action_callback("video_menu_click", listener, link);
 			}});
-    	//WriteWebImage(fm_Body, image_path, 180);
     	parent.add(fm_Body);
-    	if (setfocus) { fm_Body.setFocus(); }
+    	if (setfocus) { 
+    		fm_Body.setFocus(); 
+    		lf.setBackground(BackgroundFactory.createSolidBackground(color_grayest)); 
+		}
     	return fm_Body;
 	}
 	
 	public Manager share_content(Manager parent, final String content, final String link) {
-		VerticalFieldManager vfm = new VerticalFieldManager(Field.USE_ALL_WIDTH);
+		final VerticalFieldManager vfm = new VerticalFieldManager(Field.USE_ALL_WIDTH);
 		Background b = BackgroundFactory.createSolidTransparentBackground(Color.GRAY, 48);
 		Border bb = BorderFactory.createRoundedBorder(xye, Color.GRAY, Border.STYLE_SOLID);
 		vfm.setBackground(b);
@@ -441,19 +509,36 @@ public class Layout extends UserInterface {
 		vfm.setMargin(13,3,3,3);
 		parent.add(vfm);
 		XYEdges cxye = new XYEdges(Color.BLACK,Color.BLACK,Color.BLACK,Color.BLACK);
-		Border sb =  BorderFactory.createRoundedBorder(xye);
-		if (content.equalsIgnoreCase("facebook") || content.equalsIgnoreCase("twitter")) {
+		final Border sb =  BorderFactory.createRoundedBorder(xye);
+		if (content.equalsIgnoreCase("facebook")) {
 			WriteParragraph(vfm, "Escriba su mensaje personal", h3, 0);
-			EditField efMess = new EditField(Field.USE_ALL_WIDTH);
+			final EditField efMess = new EditField(Field.USE_ALL_WIDTH);
 			efMess.setBorder(sb);
 			vfm.add(efMess);
 			//msg = efMess;
 			// ButtonField
 			ButtonField btn = new ButtonField("Compartir"){
 				protected boolean navigationClick(int status, int time) {
-					//call_back_share
-					//Launch_Sharing(content);
-					c.action_callback("share_do", content, "");
+					c.action_callback("share", "face", efMess.getText());
+					return true;
+				   }
+			};
+			vfm.add(btn);
+			FormatLabel(vfm, small, Color.BLACK, "Vínculo a la nota");
+			FormatLabel(vfm, h3, Color.BLACK, link);
+			FormatLabel(vfm, small, Color.BLACK, "Se incluirá automáticamente");
+		}
+		
+		if (content.equalsIgnoreCase("twitter")) {
+			WriteParragraph(vfm, "Escriba su mensaje personal", h3, 0);
+			final EditField efMess = new EditField(Field.USE_ALL_WIDTH);
+			efMess.setBorder(sb);
+			vfm.add(efMess);
+			//msg = efMess;
+			// ButtonField
+			ButtonField btn = new ButtonField("Compartir"){
+				protected boolean navigationClick(int status, int time) {
+					c.action_callback("share", "tweet", efMess.getText());
 					return true;
 				   }
 			};
@@ -466,13 +551,13 @@ public class Layout extends UserInterface {
 		if (content.equalsIgnoreCase("mail")) {
 			//MAIL
 			WriteParragraph(vfm, "Escriba el correo del destinatario", h3, 0);
-			EditField efMail = new EditField(Field.USE_ALL_WIDTH | EditField.FILTER_EMAIL);
+			final EditField efMail = new EditField(Field.USE_ALL_WIDTH | EditField.FILTER_EMAIL);
 			vfm.add(efMail);
 			efMail.setBorder(sb);
 			//mail = efMail;
 			//SUJECT
 			WriteParragraph(vfm, "Escriba asunto", h3, 0);
-			EditField efSubj = new EditField(Field.USE_ALL_WIDTH);
+			final EditField efSubj = new EditField(Field.USE_ALL_WIDTH);
 			vfm.add(efSubj);
 			efSubj.setBorder(sb);
 			//sub = efSubj;
@@ -484,7 +569,25 @@ public class Layout extends UserInterface {
 			//msg = efMess;
 			ButtonField btn = new ButtonField("Compartir"){
 				protected boolean navigationClick(int status, int time) {
-					c.action_callback("share_do", content, "");
+					if (content.equalsIgnoreCase("facebook") || content.equalsIgnoreCase("twitter")) {
+						WriteParragraph(vfm, "Escriba su mensaje personal", h3, 0);
+						final EditField efMess = new EditField(Field.USE_ALL_WIDTH);
+						efMess.setBorder(sb);
+						vfm.add(efMess);
+						//msg = efMess;
+						// ButtonField
+						ButtonField btn = new ButtonField("Compartir"){
+							protected boolean navigationClick(int status, int time) {
+								String params[] = {"mail",efMail.getText(),efSubj.getText(),efMess.getText()};
+								c.action_callback("share", params);
+								return true;
+							   }
+						};
+						vfm.add(btn);
+						FormatLabel(vfm, small, Color.BLACK, "Vínculo a la nota");
+						FormatLabel(vfm, h3, Color.BLACK, link);
+						FormatLabel(vfm, small, Color.BLACK, "Se incluirá automáticamente");
+					}
 					return true;
 				   }
 			};

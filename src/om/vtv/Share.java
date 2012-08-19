@@ -9,6 +9,7 @@ import net.rim.blackberry.api.browser.Browser;
 import net.rim.blackberry.api.browser.BrowserSession;
 import net.rim.blackberry.api.invoke.Invoke;
 import net.rim.blackberry.api.invoke.MessageArguments;
+import net.rim.device.api.i18n.Locale;
 import net.rim.device.api.ui.Manager;
 import net.rim.device.api.ui.UiApplication;
 import net.rim.device.api.ui.component.EditField;
@@ -36,22 +37,36 @@ public class Share extends VTV {
 
 		Share(String smethod, String ref) {
 			La = new Layout(this);
+			Locale.setDefault(Locale.get(Locale.LOCALE_es_MX, null));  
 			this_link = ref;
 			this_method = smethod;
+			System.out.println("SHARE METHOD "+this_method+" URL "+this_link);
 			Manager fm_MainHolder = La.construct_main();
 			super.add(fm_MainHolder);
 		    mastercontainer = fm_MainHolder;
 	        La.construct_header(fm_MainHolder, false);
-	        String bquery = BitlyQuery(ref);
-	        construct_bitly_res(fm_MainHolder, bquery);
+	        La.share_content(fm_MainHolder, this_method, this_link);
 	        
 		}
-		public void InitializeShareContent(Manager parent, String subk, String tag, String title, String data) {
-			La.share_content(parent, subk, this_link);
-				
+		
+		public void action_callback(String action, String specific, String param) {
+			if (action.equalsIgnoreCase("share")) {
+				if (specific.equalsIgnoreCase("tweet")) {
+					InvokeTwitter(param, this_link);
+				}
+				if (specific.equalsIgnoreCase("face")) {
+					InvokeFace(param, this_link);
+				}
+			}
 		}
 		
-		
+		public void action_callback(String action, String params[]) {
+			if (action.equalsIgnoreCase("share")) {
+				if (params[0].equalsIgnoreCase("mail")) {
+					InvokeMail(params[3], params[2], params[1], this_link);
+				}
+			}
+		}
 		
 		 public void Launch_Sharing(String content) {
 			 if (content.equalsIgnoreCase("mail")) {
@@ -68,13 +83,12 @@ public class Share extends VTV {
 		 
 		 
 		 public void construct_bitly_res(final Manager parent, final String url) {
-			 final Manager hold = invoke_hold_flag(parent, content_lang);
+			 //final Manager hold = invoke_hold_flag(parent, content_lang);
 			 final VTV t = this;
 			 UiApplication.getUiApplication().invokeLater( 
 				new Runnable()  {   
 					public void run ()    { 
-						//ContentManager tcn = new ContentManager(t, parent, content_lang, "","","","");
-				        //InputStream is = tcn.download_parse_resource(url, true);
+						//InputStream is = tcn.download_parse_resource(url, true);
 						//String str = StreamToString(is);
 						//this_link = parse_json_bitly(str);
 						this_link = url;
